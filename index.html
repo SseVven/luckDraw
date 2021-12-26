@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <title>抽奖平台</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- <meta name="Author" content="SseVven" /> -->
+  <!-- <meta name="Copyright" content="SseVven" /> -->
+  <!-- <meta name="keywords" content="网站关键字" /> -->
+  <!-- <meta name="description" content="网站描述" /> -->
+  <link rel="shortcut Icon" href="http://www.bilibili.com/favicon.ico" type="image/x-icon" />
+  <!-- <link rel="stylesheet" href="CSS文件路径" /> -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <style>
+    body {
+      background-image: url('https://s2.loli.net/2021/12/26/GIKWbi7aBp5eAUf.jpg');
+      background-size: 100%;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      list-style: none;
+    }
+    #app {
+      height: 100vh;
+    }
+
+    .active {
+      color: red;
+    }
+
+    .startBtn {
+      width: 100px;
+      height: 100px;
+      background-color: rgb(243, 235, 8);
+      border-radius: 50%;
+      border: none;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .startBtn:hover {
+      border: 1px solid #000;
+      box-shadow: 1px,1px,10px,#000;
+    }
+    .loading {
+      cursor: progress;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <nav>
+      <button
+        style="height: 32px;margin-right: 7px;padding: 4px;"
+        v-for="(item, index) in modes"
+        @click="mode=index"
+        :class="{active:mode === index}"
+      >
+        {{ item }}
+      </button>
+    </nav>
+    <main style="background-color: skyblue;">
+      <div
+        v-show="mode===0"
+        style="display: flex;flex-direction: column;align-items: center;justify-content: center;"
+      >
+        <select
+          style="width: 200px;height: 48px;font-size: 32px;"
+          v-model="rewardSelected"
+        >
+          <option 
+            v-for="(reward, index) in rewards"
+            :value="index"
+          >
+            {{ reward.name }}
+          </option>
+        </select>
+        <div
+          style="text-align:center;color: red;font-size: 48px;"
+        >
+          {{ staffs[staffSelected] }}
+        </div>
+        <button
+          @click="start"
+          class="startBtn" 
+          :class="{loading:startLock}"
+        >
+          Start
+        </button>
+        <!-- 历史 -->
+        <ul
+          v-for="item in rewards"
+        >
+          <li style="font-weight: bold;font-size: 32px;">{{ item.name  + '(' + item.staffs.length + '人)' }}</li>
+          <ul>
+            <li v-for="staff in item.staffs">
+              <span style="display:inline-block;width: 32px;">
+                {{ staff }}
+              </span>
+              {{ staffs[staff] }}
+            </li>
+          </ul>
+        </ul>
+      </div>
+      <div v-show="mode===1">
+        <ul>
+          <li v-for="(item, index) in staffs" style="display:inline-block;font-size:16px;width: 120px;">
+            <span style="display:inline-block;width: 32px;">
+              {{ index }}
+            </span>
+            {{ item }}
+          </li>
+        </ul>
+      </div>
+      <div v-show="mode===2">
+        <ul
+          v-for="item in rewards"
+        >
+          <li style="font-weight: bold;">{{ item.name  + '(' + item.staffs.length + '人)' }}</li>
+          <li v-for="staff in item.staffs">
+            <span style="display:inline-block;width: 32px;">
+              {{ staff }}
+            </span>
+            {{ staffs[staff] }}
+          </li>
+        </ul>
+      </div>
+    </main>
+  </div>
+  <script>
+    const app = new Vue({
+      el: "#app", //用于挂载要管理的元素
+      data: {
+        name: "朱子豪",
+        modes: ['选单项逐个抽', '人员名单', '抽奖历史'],
+        mode: 0,
+        startLock: false,
+        rewardSelected: 0,
+        rewards: [
+          {
+            name: '特等奖',
+            nums: 2,
+            staffs: [],
+          },
+          {
+            name: '一等奖',
+            nums: 5,
+            staffs: [],
+          },
+          {
+            name: '二等奖',
+            nums: 10,
+            staffs: [],
+          },
+          {
+            name: '三等奖',
+            nums: 20,
+            staffs: [],
+          },
+          {
+            name: '幸运奖',
+            nums: 30,
+            staffs: [],
+          },
+        ],
+        staffSelected: -1,
+        staffsSelected: [],
+        staffs: [
+          '庞  娟', '王  娟',
+          '王  玲', '钟  艳',
+          '李代荣', '刘  靖',
+          '谭  琳', '陈彦燕',
+          '向文鱼', '李  庆',
+          '姜卉颖', '任  忠',
+          '黄小燕', '张忠于',
+          '肖  莉', '冉淑惠',
+          '肖应艳', '张大伟',
+          '何  瑜', '向  薇',
+          '宋柳延', '王  芹',
+          '熊  艳', '李  红',
+          '王  倩', '郑翔琼',
+          '程兰钦', '喻茂盛',
+          '李  丹', '潘晓莉',
+          '于  江', '谢菊英',
+          '李林径', '易小梅',
+          '黄丹丹', '甘妍玲',
+          '何  芳', '李虹萍',
+          '涂  越', '刘  俐',
+          '桑  丹', '于昆月',
+          '雷斯寒', '庞  尧',
+          '杨  簪', '李亮红',
+          '金丽娜', '代  平',
+          '郎  梦', '王  丹',
+          '王  嘉', '杨淑涵',
+          '张力丹', '牟红霞',
+          '侯瑜琴', '李  露',
+          '李  倩', '曾静悦',
+          '李润霞', '胡  珊',
+          '周星伶', '邓  琦',
+          '杨  滔', '李双双',
+          '李美林', '何庆庆',
+          '张郁林', '邓丽杉',
+          '李姝姝', '杜方娇',
+          '朱珏瑾', '车芙蓉',
+          '王玉洁', '黄  惠',
+          '石  晨', '王前贵',
+          '邱前程', '唐  怡',
+          '车林雪', '徐辰曦',
+          '莫  丹', '罗  燕',
+          '何伶俐', '唐明慧',
+          '廖雪芹', '熊  清',
+          '夏先进', '陈红兰',
+          '李  莉', '邓丽明',
+          '聂亚鸽', '夏  会',
+          '罗  兰', '郭  渠',
+          '杜  丽', '钟  琴',
+          '韦  碧', '肖红霞',
+          '曹红梅', '张雪巧',
+          '李  蓉', '叶小琳',
+          '杨  毅', '许  姣',
+          '王名芳', '郭柳君',
+          '苏满琼', '陈  丹',
+          '陈  霞', '黎  娟',
+          '罗菊章', '汤  婷',
+          '周丽华', '唐子丹',
+        ],
+      },
+      methods: {
+        start() {
+          if (this.startLock) {
+            return
+          }
+          this.startLock = true
+          // 生成1-职员数目的随机数
+          const final = (this.staffSelected + Math.floor(Math.random()*this.staffs.length+1))%(this.staffs.length);
+          console.log(final);
+          let timer = setInterval(() => {
+            this.staffSelected++
+            if (this.staffSelected >= this.staffs.length) {
+              this.staffSelected = 0
+            }
+            if (final === this.staffSelected) {
+              clearInterval(timer)
+              this.rewards[this.rewardSelected].staffs.push(this.staffSelected)
+              this.startLock = false
+            }
+          }, 100);
+        },
+      },
+    });
+  </script>
+</body>
+
+</html>
